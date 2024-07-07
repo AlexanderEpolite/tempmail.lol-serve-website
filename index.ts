@@ -41,17 +41,9 @@ createServer((req, res) => {
         
         res.end(file_cache[filePath]);
     } else {
-        let vue_route = vue_route_paths.find((route) => req.url?.endsWith(route));
+        let vue_route = filePath?.match(/(\/[a-z]{2})?\/(contact|api|docs|free-encrypted-chat|privacy|privacy-policy|terms|terms-of-service|index)(.html)?/)
         
-        if(!vue_route) { //try with .html
-            vue_route = vue_route_paths.find((route) => req.url?.endsWith(route + ".html"));
-        }
-        
-        if(!vue_route) { //try with trailing slash
-            vue_route = vue_route_paths.find((route) => req.url?.endsWith(route + "/"));
-        }
-        
-        if (vue_route) {
+        if (vue_route || (filePath === "/")) {
             
             res.setHeader('X-Robots-Tag', 'index, follow');
             

@@ -9,6 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@types/mime-types": "^2.1.4",
     "@types/node": "^20.14.10",
     "mime-types": "^2.1.35"
   }
