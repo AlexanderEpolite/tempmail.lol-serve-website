@@ -41,14 +41,14 @@ createServer((req, res) => {
         
         res.end(file_cache[filePath]);
     } else {
-        let vue_route = vue_route_paths.find((route) => req.url?.includes(route));
+        let vue_route = vue_route_paths.find((route) => req.url?.endsWith(route));
         
         if(!vue_route) { //try with .html
-            vue_route = vue_route_paths.find((route) => req.url?.includes(route + ".html"));
+            vue_route = vue_route_paths.find((route) => req.url?.endsWith(route + ".html"));
         }
         
         if(!vue_route) { //try with trailing slash
-            vue_route = vue_route_paths.find((route) => req.url?.includes(route + "/"));
+            vue_route = vue_route_paths.find((route) => req.url?.endsWith(route + "/"));
         }
         
         if (vue_route) {
