@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync, statSync } from "fs";
 import { createServer } from "http";
-import { join, extname } from "path";
+import { join, extname, relative } from "path";
 import mime from "mime-types";
 
 console.log("Serving from /var/www/html/");
@@ -16,8 +16,9 @@ function cacheAllFiles(directory: string) {
             cacheAllFiles(filePath);
         } else {
             const fileContent = readFileSync(filePath);
-            file_cache[filePath] = fileContent;
-            console.log(`Cached ${filePath}`);
+            const relativePath = relative("/var/www/html", filePath);
+            file_cache[relativePath] = fileContent;
+            console.log(`Cached ${relativePath}`);
         }
     });
 }
@@ -34,7 +35,7 @@ createServer((req, res) => {
         
         res.end(file_cache[filePath]);
     } else {
-        let vue_route = filePath?.match(/(\/[a-z]{2})?\/(contact|api|docs|free-encrypted-chat|privacy|privacy-policy|terms|terms-of-service|index)(.html)?/)
+        let vue_route = filePath?.match(/(\/[a-z]{2})?\/(contact|api|docs|free-encrypted-chat|privacy|privacy-policy|terms|terms-of-service|index)(.html)?(\/)?$/)
         
         let sc = (vue_route || filePath === "/") ? 200 : 404;
         
