@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from "fs";
+import { readdirSync, readFileSync, statSync } from "fs";
 import { createServer } from "http";
 import { join, extname } from "path";
 import mime from "mime-types";
@@ -7,14 +7,22 @@ console.log("Serving from /var/www/html/");
 
 const file_cache: { [key: string]: Buffer } = {};
 
-readdirSync("/var/www/html/").forEach((file) => {
-    const filePath = join("/var/www/html/", file);
-    const fileContent = readFileSync(filePath);
-    
-    file_cache[file] = fileContent;
-    
-    console.log(`Cached ${file}`);
-});
+function cacheAllFiles(directory: string) {
+    readdirSync(directory).forEach((file) => {
+        const filePath = join(directory, file);
+        const fileStat = statSync(filePath);
+
+        if (fileStat.isDirectory()) {
+            cacheAllFiles(filePath);
+        } else {
+            const fileContent = readFileSync(filePath);
+            file_cache[filePath] = fileContent;
+            console.log(`Cached ${filePath}`);
+        }
+    });
+}
+
+cacheAllFiles("/var/www/html/");
 
 createServer((req, res) => {
     const filePath = req.url?.substring(1);
