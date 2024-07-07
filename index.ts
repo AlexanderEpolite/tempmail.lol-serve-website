@@ -4,7 +4,6 @@ import { join, extname } from "path";
 import mime from "mime-types";
 
 console.log("Serving from /var/www/html/");
-console.log("Caching all files in directory");
 
 const file_cache: { [key: string]: Buffer } = {};
 
@@ -17,20 +16,6 @@ readdirSync("/var/www/html/").forEach((file) => {
     console.log(`Cached ${file}`);
 });
 
-const vue_route_paths = [
-    "contact",
-    "api",
-    "docs",
-    "free-encrypted-chat",
-    "privacy",
-    "privacy-policy",
-    "terms",
-    "terms-of-service",
-    "terms-of-use",
-    "", //intentionally empty (index.html)
-    "index"
-];
-
 createServer((req, res) => {
     const filePath = req.url?.substring(1);
     
@@ -41,23 +26,17 @@ createServer((req, res) => {
         
         res.end(file_cache[filePath]);
     } else {
-        let vue_route = filePath?.match(/(\/[a-z]{2})?\/(contact|api|docs|free-encrypted-chat|privacy|privacy-policy|terms|terms-of-service|index)(.html)?/)
+        let vue_route = filePath?.match(/(\/[a-z]{2})?\/(contact|api|docs|free-encrypted-chat|privacy|privacy-policy|terms|terms-of-service|index)(.html)?/);
         
-        if (vue_route || (filePath === "/")) {
-            
-            res.setHeader('X-Robots-Tag', 'index, follow');
-            
-            //deny iframe
-            res.setHeader('X-Frame-Options', 'DENY');
-            res.setHeader('Content-Security-Policy', "frame-ancestors 'none'");
-            res.setHeader('X-XSS-Protection',  '1; mode=block');
-            
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(file_cache['index.html']);
-        } else {
-            res.writeHead(404, { 'Content-Type': 'text/html' });
-            res.end(file_cache['index.html']);
-        }
+        let sc = (vue_route || filePath === "/") ? 200 : 404;
+        
+        res.setHeader('X-Robots-Tag', 'index, follow');
+        res.setHeader('X-Frame-Options', 'DENY');
+        res.setHeader('Content-Security-Policy', "frame-ancestors 'none'");
+        res.setHeader('X-XSS-Protection',  '1; mode=block');
+        res.setHeader('Content-Type', 'text/html');
+        
+        res.end(file_cache['index.html']);
     }
 }).listen(3000, () => {
     console.log("Server is listening on port 3000");
