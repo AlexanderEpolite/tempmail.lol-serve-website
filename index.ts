@@ -28,6 +28,20 @@ cacheAllFiles("/var/www/html/");
 createServer((req, res) => {
     const filePath = req.url?.substring(1);
     
+    res.setHeader('X-Robots-Tag', 'index, follow');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Content-Security-Policy', "frame-ancestors 'none'");
+    res.setHeader('X-XSS-Protection',  '1; mode=block');
+    
+    if(filePath === "/") {
+        res.setHeader('Content-Type', 'text/html');
+        
+        res.writeHead(200);
+        
+        res.end(file_cache['index.html']);
+        return;
+    }
+    
     if (filePath && file_cache[filePath]) {
         const mimeType = mime.lookup(extname(filePath)) || 'application/octet-stream';
         
@@ -38,11 +52,6 @@ createServer((req, res) => {
         let vue_route = filePath?.match(/(\/[a-z]{2})?\/(contact|api|docs|pricing|free-encrypted-chat|privacy|privacy-policy|terms|terms-of-service|index|terms-of-use|faq)(.html)?(\/)?$/)
         
         let sc = (vue_route || filePath === "/") ? 200 : 404;
-        
-        res.setHeader('X-Robots-Tag', 'index, follow');
-        res.setHeader('X-Frame-Options', 'DENY');
-        res.setHeader('Content-Security-Policy', "frame-ancestors 'none'");
-        res.setHeader('X-XSS-Protection',  '1; mode=block');
         res.setHeader('Content-Type', 'text/html');
         
         res.writeHead(sc);
