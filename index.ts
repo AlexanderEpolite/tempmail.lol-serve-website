@@ -32,8 +32,9 @@ createServer((req, res) => {
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('Content-Security-Policy', "frame-ancestors 'none'");
     res.setHeader('X-XSS-Protection',  '1; mode=block');
+    res.setHeader("X-Your-Thing-Origin", filePath || "/")
     
-    if(filePath === "/") {
+    if(filePath === "") {
         res.setHeader('Content-Type', 'text/html');
         
         res.writeHead(200);
