@@ -26,7 +26,7 @@ createServer((req, res) => {
         
         res.end(file_cache[filePath]);
     } else {
-        let vue_route = filePath?.match(/(\/[a-z]{2})?\/(contact|api|docs|free-encrypted-chat|privacy|privacy-policy|terms|terms-of-service|index)(.html)?/);
+        let vue_route = filePath?.match(/(\/[a-z]{2})?\/(contact|api|docs|free-encrypted-chat|privacy|privacy-policy|terms|terms-of-service|index)(.html)?/)
         
         let sc = (vue_route || filePath === "/") ? 200 : 404;
         
@@ -35,6 +35,8 @@ createServer((req, res) => {
         res.setHeader('Content-Security-Policy', "frame-ancestors 'none'");
         res.setHeader('X-XSS-Protection',  '1; mode=block');
         res.setHeader('Content-Type', 'text/html');
+        
+        res.writeHead(sc);
         
         res.end(file_cache['index.html']);
     }
