@@ -50,7 +50,7 @@ createServer((req, res) => {
         
         res.end(file_cache[filePath]);
     } else {
-        let vue_route = filePath?.match(/^([a-z]{2})?(\/)?(contact|api|docs|pricing|free-encrypted-chat|privacy|privacy-policy|terms|terms-of-service|index|terms-of-use|faq)?(\.html)?\/?$/);
+        let vue_route = filePath?.match(/^([a-z]{2})?(\/)?(contact|api|docs|pricing|free-encrypted-chat|privacy|privacy-policy|terms|terms-of-service|index|terms-of-use|faq|account)?(\.html)?\/?$/);
         
         let sc = (vue_route || filePath === "/") ? 200 : 404;
         res.setHeader('Content-Type', 'text/html');
